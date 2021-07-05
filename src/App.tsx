@@ -1,1 +1,7 @@
-export const App = () => <h1>Say, Hello to my little friend!</h1>;
+import { Routes } from "./routes";
+import { AuthContextProvider } from "./context/authContext";
+export const App = () => (
+  <AuthContextProvider>
+    <Routes />
+  </AuthContextProvider>
+);
