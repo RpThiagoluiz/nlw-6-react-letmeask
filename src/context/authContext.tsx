@@ -19,6 +19,7 @@ type authContextProviderProps = {
 export const AuthContext = createContext({} as authContextType);
 
 export const AuthContextProvider = ({ children }: authContextProviderProps) => {
+  //como meu usuario nao tem conteudo, ele fica como undefined, e assim ele seta o estado inicial como false
   const [user, setUser] = useState<userProps>();
 
   useEffect(() => {
