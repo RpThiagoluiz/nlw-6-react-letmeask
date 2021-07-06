@@ -42,6 +42,13 @@ export const Home = () => {
       alert(`room does not exists`);
       return;
     }
+
+    if (roomRef.val().endedAt) {
+      setIsLoading(false);
+      alert("Room Encerrada");
+      return;
+    }
+
     setIsLoading(false);
     push(`/rooms/${room}`);
   };
