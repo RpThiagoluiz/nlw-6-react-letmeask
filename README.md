@@ -13,6 +13,7 @@ _addStyledComponent_
 _ModalForUser_
 _InputComponent_ -> useRef and ErrorMessage.
 _DescAltImages_
+_AdminRots_ just for Author.
 _Versel_ || _Netfly_
 
 ### Implemented

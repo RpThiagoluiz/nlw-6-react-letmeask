@@ -1,13 +1,17 @@
 import { useHistory, useParams } from "react-router-dom";
-// import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../hooks/useAuth";
 import { database } from "../services/firebase";
 import { useRoom } from "../hooks/useRoom";
+import { NotAdmin } from "./NotAdmin";
 import { Button } from "../components/Button";
 import { Question as QuestionComponent } from "../components/Question";
 import { RoomCode } from "../components/RoomCode";
 import logoImg from "../assets/images/logo.svg";
+import checkImg from "../assets/images/check.svg";
+import answerImg from "../assets/images/answer.svg";
 import deleteImg from "../assets/images/delete.svg";
 import "../styles/room.scss";
+import { useAdmin } from "../hooks/useAdmin";
 
 type RoomParms = {
   id: string;
@@ -22,14 +26,9 @@ export const AdminRoom = () => {
 
   const { push } = useHistory();
 
-  // const { user } = useAuth();
   const { questions, title } = useRoom(roomId);
-
-  const handleDeleteQuestion = async (questionId: string) => {
-    if (window.confirm("Tem certeza q vc deseja excluir esta pergunta?")) {
-      await database.ref(`rooms/${roomId}/questions/${questionId}`).remove();
-    }
-  };
+  const { user } = useAuth();
+  const { authorId } = useAdmin(roomId);
 
   const handleEndRoom = async () => {
     await database.ref(`rooms/${roomId}`).update({
@@ -38,6 +37,26 @@ export const AdminRoom = () => {
 
     push("/");
   };
+
+  const handleDeleteQuestion = async (questionId: string) => {
+    if (window.confirm("Tem certeza q vc deseja excluir esta pergunta?")) {
+      await database.ref(`rooms/${roomId}/questions/${questionId}`).remove();
+    }
+  };
+
+  const handleHighlightQuestion = async (questionId: string) => {
+    await database.ref(`rooms/${roomId}/questions/${questionId}`).update({
+      isHighlighted: true,
+    });
+  };
+
+  const handleCheckQuestion = async (questionId: string) => {
+    await database.ref(`rooms/${roomId}/questions/${questionId}`).update({
+      isAnswered: true,
+    });
+  };
+
+  if (user?.id !== authorId) return <NotAdmin />;
 
   return (
     <div id="page-room">
@@ -71,6 +90,29 @@ export const AdminRoom = () => {
         <div className="question-list">
           {questions.map((question) => (
             <QuestionComponent key={question.id} question={question}>
+              {/* !question.isAnswered -< Just verify that is true or false. */}
+              {!question.isAnswered && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => handleCheckQuestion(question.id)}
+                  >
+                    <img
+                      src={checkImg}
+                      alt="icone de um v, utilizada para marcar como respondida a pergunta"
+                    />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleHighlightQuestion(question.id)}
+                  >
+                    <img
+                      src={answerImg}
+                      alt="icone de uma balao de dialogo, utilizada para destacar aquele pergunta"
+                    />
+                  </button>
+                </>
+              )}
               <button
                 type="button"
                 onClick={() => handleDeleteQuestion(question.id)}

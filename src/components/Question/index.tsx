@@ -9,11 +9,21 @@ type QuestionProps = {
       name: string;
       avatar: string;
     };
+    isHighlighted?: boolean;
+    isAnswered?: boolean;
   };
 };
 
-export const Question = ({ question, children }: QuestionProps) => (
-  <div className="question">
+export const Question = ({
+  question,
+  question: { isAnswered = false, isHighlighted = false },
+  children,
+}: QuestionProps) => (
+  <div
+    className={`question ${isAnswered && "answered"} ${
+      isHighlighted && !isAnswered ? "highlighted" : ""
+    }`}
+  >
     <p>{question.content}</p>
     <footer>
       <div className="user-info">
@@ -23,7 +33,7 @@ export const Question = ({ question, children }: QuestionProps) => (
         />
         <span>{question.author.name}</span>
       </div>
-      <div>{children}</div>
+      <div className="content-actions">{children}</div>
     </footer>
   </div>
 );
